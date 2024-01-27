@@ -18,9 +18,6 @@ ORDER BY 1;
 
 ---------Second Method
 
-with cte as (
-select merchant,(case when pay_mode ='cash' then amount else 0 end) cash_mode,
-(case when pay_mode ='online' then amount else 0 end) online_mode from sale
-group by 1,2,3)
-select merchant,sum(cash_mode),sum(online_mode) from cte
-group by 1 order by 1
+select merchant,sum(case when pay_mode ='cash' then amount else 0 end) cash_mode,
+sum(case when pay_mode ='online' then amount else 0 end) online_mode from sale
+group by 1 order by 1;
