@@ -506,3 +506,24 @@ SELECT s1.name AS name1 FROM Friends f JOIN Students s1 ON s1.id = f.id
 JOIN Packages p1 ON p1.id = f.id 
 JOIN Packages p2 ON p2.id = f.friend_id AND p2.salary > p1.salary ORDER BY p2.salary
 
+
+---------------------------------------------------------------------------------------------------------------------------------
+'''You are given a table, Projects, containing three columns: Task_ID, Start_Date and End_Date. It is guaranteed that the difference 
+between the End_Date and the Start_Date is equal to 1 day for each row in the table.
+If the End_Date of the tasks are consecutive, then they are part of the same project. Samantha is interested in finding the total number 
+	of different projects completed.
+Write a query to output the start and end dates of projects listed by the number of days it took to complete the project in ascending order.
+	If there is more than one project that have the same number of completion days, then order by the start date of the project.'''
+WITH cte AS
+(
+    SELECT
+        *, end_date - ROW_NUMBER() OVER(ORDER BY end_date) as diff
+    FROM Projects
+)
+
+SELECT 
+    MIN(start_date) as s, MAX(end_date) as e
+FROM cte
+GROUP BY diff
+ORDER BY e-s,s
+
