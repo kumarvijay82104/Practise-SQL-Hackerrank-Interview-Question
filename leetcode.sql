@@ -39,3 +39,7 @@ select department as Department, name as Employee,Salary  from cte_2
 where rnksal <= 3  
 order by salary desc ;
 
+'''6.Write a solution to find managers with at least five direct reports.'''
+
+
+
