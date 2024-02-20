@@ -40,6 +40,16 @@ where rnksal <= 3
 order by salary desc ;
 
 '''6.Write a solution to find managers with at least five direct reports.'''
+            
+with cte as(
+    select * from 
+        (select *,count(*) over(partition by managerId ) as mcount from employee) e 
+               where e.mcount >= 5 ),
+    cte_2 as           
+            (select distinct e.name, e.id  from cte c join employee e on c.managerid = e.id
+            group by e.id ,e.name )
+select name from cte_2 ;
+
 
 
 
