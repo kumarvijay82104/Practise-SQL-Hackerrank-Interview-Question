@@ -60,6 +60,31 @@ select id, count(*) as num from cte
 group by id 
 order by count(*) desc limit 1
 
+'''Write a solution to report the customer ids from the Customer table that bought all the products in the Product table.'''
+with cte as(
+    select * from
+        (select *,row_number()over(partition by customer_id,product_key order by customer_id)  as rn
+        from Customer ) e 
+        where e.rn = 1),
+    cte_2 as 
+    (select customer_id,count(*) pcn from cte where product_key in (select product_key from cte) group by 1)
+select customer_id from cte_2
+where pcn = (select count(distinct product_key) from Product )
+
+'''Write a solution to select the product id, year, quantity, and price for the first year of every product sold.'''
+with cte as 
+        (select product_id,year,quantity,price,rank() over(partition by product_id order by year ) rn
+                from sales) 
+select product_id,year as first_year,quantity,price from cte 
+where rn = 1
+
+'''Write a solution to find for each user, the join date and the number of orders they made as a buyer in 2019.'''
+with cte as (
+        select buyer_id,count(order_date) as order_count from orders
+        where order_date BETWEEN '2019-01-01' AND '2019-12-31'
+        group by buyer_id)
+select u.user_id as buyer_id,u.join_date,coalesce(c.order_count,0) as orders_in_2019
+        from cte c right join users u on c.buyer_id = u.user_id
 
 
 
