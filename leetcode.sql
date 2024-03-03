@@ -86,5 +86,11 @@ with cte as (
 select u.user_id as buyer_id,u.join_date,coalesce(c.order_count,0) as orders_in_2019
         from cte c right join users u on c.buyer_id = u.user_id
 
+/*If the customer's preferred delivery date is the same as the order date, then the order is called immediate; otherwise, it is called scheduled.
+The first order of a customer is the order with the earliest order date that the customer made. It is guaranteed that a customer has precisely one first order.
+Write a solution to find the percentage of immediate orders in the first orders of all customers, rounded to 2 decimal places. */
 
+select  round(avg(case when order_date = customer_pref_delivery_date then 1 else 0 end) *100,2) immediate_percentage from 
+    (select *,rank()over(partition by customer_id order by order_date asc) as rn from delivery) e 
+    where e.rn = 1
 
