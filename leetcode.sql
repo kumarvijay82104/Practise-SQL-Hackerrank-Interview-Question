@@ -94,3 +94,34 @@ select  round(avg(case when order_date = customer_pref_delivery_date then 1 else
     (select *,rank()over(partition by customer_id order by order_date asc) as rn from delivery) e 
     where e.rn = 1
 
+/*Write an SQL query to find for each month and country, the number of transactions and their total amount, the number of approved 
+transactions and their total amount. */
+
+WITH cte AS (
+    SELECT
+        id,
+        country,
+        state,
+        amount,
+        TO_CHAR(trans_date, 'yyyy-mm') AS monyear
+    FROM Transactions
+)
+SELECT
+    monyear AS month,
+    country,
+    COUNT(*) AS trans_count,
+    COUNT(*) FILTER (WHERE state = 'approved') AS approved_count,
+    SUM(amount) AS trans_total_amount,
+    COALESCE(SUM(amount) FILTER (WHERE state = 'approved'),0) AS approved_total_amount
+FROM cte
+GROUP BY 1, 2
+ORDER BY month, country
+
+
+
+
+
+
+
+
+
