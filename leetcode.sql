@@ -132,6 +132,12 @@ with cte as
 select visited_on,running_amount as amount , average_amount from cte_2
 where rn > 6
 
+/*1393 : -The Capital gain/loss of a stock is the total gain or loss after buying and selling the stock one or many times.*/
+select Stock_name,sell_price - buy_price as capital_gain_loss from 
+    (select stock_name,sum(price)filter(where operation = 'Buy') as buy_price,
+            sum(price)filter(where operation = 'Sell') as sell_price from Stocks
+            group by stock_name) e 
+
 
 
 
