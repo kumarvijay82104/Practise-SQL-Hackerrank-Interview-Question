@@ -138,7 +138,20 @@ select Stock_name,sell_price - buy_price as capital_gain_loss from
             sum(price)filter(where operation = 'Sell') as sell_price from Stocks
             group by stock_name) e 
 
-
+/*1341: - Write a solution to:
+Find the name of the user who has rated the greatest number of movies. In case of a tie, return the lexicographically smaller user name.
+Find the movie name with the highest average rating in February 2020. In case of a tie, return the lexicographically smaller movie name.*/
+with cte as (
+        select m.title,u.name,mr.rating,mr.created_at from 
+        movies m join MovieRating mr on m.movie_id = mr.movie_id join users u on u.user_id = mr.user_id ),
+     cte_2 as    
+        (select name from (select name,count(name) as most_count from cte group by name order by 2 desc ,1 limit 1)e),
+     cte_3 as   (select title from
+        (select title,avg(rating) as avg_rating from cte where created_at between '2020-02-01' and '2020-02-29' group by 1 
+                order by 2 desc ,1 limit 1) e2),
+     cte_4 as            
+        (select * from cte_2 union all select * from cte_3)
+select name as results from cte_4
 
 
 
