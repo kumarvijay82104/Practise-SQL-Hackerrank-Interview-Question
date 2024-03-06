@@ -117,6 +117,20 @@ FROM cte
 GROUP BY 1, 2
 ORDER BY month, country
 
+/*You are the restaurant owner and you want to analyze a possible expansion (there will be at least one customer every day).Compute the moving 
+average of how much the customer paid in a seven days window (i.e., current day + 6 days before). average_amount should be rounded to two decimal places.Return
+the result table ordered by visited_on in ascending order.*/
+
+with cte as 
+    (select visited_on,sum(amount) as tamount from Customer group by visited_on ),
+    cte_2 as 
+    (SELECT *, 
+        SUM(tamount) OVER (ORDER BY visited_on RANGE BETWEEN INTERVAL '6 days' PRECEDING AND CURRENT ROW) AS running_amount,
+        round(avg(tamount) OVER (ORDER BY visited_on RANGE BETWEEN INTERVAL '6 days' PRECEDING AND CURRENT ROW),2) AS average_amount,
+        row_number()over(order by visited_on ) as rn
+    FROM cte)
+select visited_on,running_amount as amount , average_amount from cte_2
+where rn > 6
 
 
 
